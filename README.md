@@ -1,2 +1,20 @@
-# IBRPRIDE-Optimization
-It’s time to experience a new Windows experience Designed for gamers
+# 👏 About
+Open Source Tweaker that was designed to improve computer performance.
+- It is important to note that the results may vary depending on the system's configuration.
+
+# 🚨 Disclaimer
+The author of this file cannot be held responsible or liable for any damages that may occur to your computer as a result of running this file. Use at your own risk.
+
+# 💻 Requirements
+- Windows 10 or 11
+- Internet Connection
+- Administrator Permissions
+
+# ❓ How to Use?
+- Go to [Releases]()
+- Download 
+- . 
+
+# 🤝 Community
+Feel free to join [IBRPRIDE Hub](https://discord.gg/ibrpride-961025296088301648) 
+- The server was designed for those who are interested in tweaking
