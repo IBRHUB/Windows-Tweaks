@@ -1,5 +1,5 @@
 # 👏 About
-Open Source Tweaker that was designed to improve computer performance.
+Open Source that was designed to improve computer performance.
 - It is important to note that the results may vary depending on the system's configuration.
 
 # 🚨 Disclaimer
@@ -11,7 +11,7 @@ The author of this file cannot be held responsible or liable for any damages tha
 - Administrator Permissions
 
 # ❓ How to Use?
-- Go to [Releases]()
+- Go to [Releases](https://github.com/ibrpride/Windows-Tweaks/releases)
 - Download 
 - . 
 
