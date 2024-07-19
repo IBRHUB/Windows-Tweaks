@@ -1,20 +1,20 @@
 # 👏 About
-Open Source that was designed to improve computer performance.
-- It is important to note that the results may vary depending on the system's configuration.
+This open-source tool is designed to enhance computer performance. Results may vary based on your system's configuration.
 
 # 🚨 Disclaimer
-The author of this file cannot be held responsible or liable for any damages that may occur to your computer as a result of running this file. Use at your own risk.
+The author is not responsible for any damages that may occur from using this tool. Use at your own risk.
 
 # 💻 Requirements
 - Windows 10 or 11
 - Internet Connection
 - Administrator Permissions
 
-# ❓ How to Use?
-- Go to [Releases](https://github.com/ibrpride/Windows-Tweaks/releases)
-- Download 
-- . 
+# ❓ How to Use
+1. Visit the [Releases](https://github.com/ibrpride/Windows-Tweaks/releases) page.
+2. Download `Windows.Tweaks.exe`.
+3. Double-click the file to execute it.
+
+[Watch the video tutorial here] soon
 
 # 🤝 Community
-Feel free to join [IBRPRIDE Discord](https://discord.gg/ibrpride-961025296088301648) 
-- The server was designed for those who are interested in tweaking
+Join the [IBRPRIDE Discord](https://discord.gg/ibrpride-961025296088301648) to connect with others interested in tweaking and optimizing their systems.
