@@ -3,6 +3,8 @@
 :: Enable Delayed Expansion
 setlocal enabledelayedexpansion
 
+title Reduce Processes
+
 cd /d %~dp0 
 start Disclaimer.txt
 pause
