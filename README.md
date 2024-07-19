@@ -16,5 +16,5 @@ The author of this file cannot be held responsible or liable for any damages tha
 - . 
 
 # 🤝 Community
-Feel free to join [IBRPRIDE Hub](https://discord.gg/ibrpride-961025296088301648) 
+Feel free to join [IBRPRIDE Discord](https://discord.gg/ibrpride-961025296088301648) 
 - The server was designed for those who are interested in tweaking
