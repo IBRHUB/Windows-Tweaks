@@ -1,4 +1,19 @@
+<#
+.SYNOPSIS
 
+
+.DESCRIPTION
+
+
+.LINK
+https://ibrpride.com
+
+.NOTES
+Author: Ibrahim
+Website: https://ibrpride.com
+Script Version: 1.0
+Last Updated: July 2024
+#>
 
 
 # Function to measure and display the time taken
