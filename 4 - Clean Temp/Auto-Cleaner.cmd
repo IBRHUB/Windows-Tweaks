@@ -1,6 +1,6 @@
 @echo off
 setlocal EnableDelayedExpansion
-title Auto-Cleaner
+powershell.exe -Command "$host.ui.RawUI.WindowTitle = 'Auto Cleaner | @IBRPRIDE'"
 color 2
 echo [93m- Clean up temp folders[0m
 rd /s /q !TEMP! >nul 2>&1
