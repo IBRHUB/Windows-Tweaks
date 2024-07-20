@@ -125,6 +125,13 @@ function Apply-RegistryTweaks {
     Start-Sleep -Seconds 1
     Write-Host
 
+    # Disable Background Apps
+    Write-Host "- Disabling Background Apps" -ForegroundColor Yellow
+    Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\BackgroundAccessApplications" -Name "GlobalUserDisabled" -Value 1 2> $null
+    Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Search" -Name "BackgroundAppGlobalToggle" -Value 0 2> $null
+    Start-Sleep -Seconds 1
+    Write-Host
+
     # Enable Hardware-Accelerated GPU Scheduling
     Write-Host "- Enabling Hardware-Accelerated GPU Scheduling" -ForegroundColor Yellow
     Set-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Control\GraphicsDrivers" -Name "HwSchMode" -Value 2 2> $null
