@@ -47,20 +47,23 @@ function Create-FirewallRules {
     )
     
     Write-Host "Creating rules for $gameName..." -ForegroundColor Green
+    try {
+        # Create TCP Inbound and Outbound rules
+        foreach ($port in $tcpPorts) {
+            New-NetFirewallRule -DisplayName "$gameName TCP Inbound $port" -Direction Inbound -Protocol TCP -LocalPort $port -Action Allow -ErrorAction Stop
+            New-NetFirewallRule -DisplayName "$gameName TCP Outbound $port" -Direction Outbound -Protocol TCP -LocalPort $port -Action Allow -ErrorAction Stop
+        }
 
-    # Create TCP Inbound and Outbound rules
-    foreach ($port in $tcpPorts) {
-        New-NetFirewallRule -DisplayName "$gameName TCP Inbound $port" -Direction Inbound -Protocol TCP -LocalPort $port -Action Allow > $null
-        New-NetFirewallRule -DisplayName "$gameName TCP Outbound $port" -Direction Outbound -Protocol TCP -LocalPort $port -Action Allow > $null
+        # Create UDP Inbound and Outbound rules
+        foreach ($port in $udpPorts) {
+            New-NetFirewallRule -DisplayName "$gameName UDP Inbound $port" -Direction Inbound -Protocol UDP -LocalPort $port -Action Allow -ErrorAction Stop
+            New-NetFirewallRule -DisplayName "$gameName UDP Outbound $port" -Direction Outbound -Protocol UDP -LocalPort $port -Action Allow -ErrorAction Stop
+        }
+
+        Write-Host "Rules for $gameName created successfully." -ForegroundColor Green
+    } catch {
+        Write-Host "Error creating rules for $gameName: $_" -ForegroundColor Red
     }
-
-    # Create UDP Inbound and Outbound rules
-    foreach ($port in $udpPorts) {
-        New-NetFirewallRule -DisplayName "$gameName UDP Inbound $port" -Direction Inbound -Protocol UDP -LocalPort $port -Action Allow > $null
-        New-NetFirewallRule -DisplayName "$gameName UDP Outbound $port" -Direction Outbound -Protocol UDP -LocalPort $port -Action Allow > $null
-    }
-
-    Write-Host "Rules for $gameName created successfully." -ForegroundColor Green
     Write-Host "---------------------------------------------------------------" -ForegroundColor Green
 }
 
@@ -70,11 +73,15 @@ function Remove-FirewallRules {
     )
     
     Write-Host "Removing rules for $gameName..." -ForegroundColor Red
-    $rules = Get-NetFirewallRule | Where-Object { $_.DisplayName -like "$gameName *" }
-    foreach ($rule in $rules) {
-        Remove-NetFirewallRule -Name $rule.Name > $null
+    try {
+        $rules = Get-NetFirewallRule | Where-Object { $_.DisplayName -like "$gameName *" }
+        foreach ($rule in $rules) {
+            Remove-NetFirewallRule -Name $rule.Name -ErrorAction Stop
+        }
+        Write-Host "Rules for $gameName removed successfully." -ForegroundColor Red
+    } catch {
+        Write-Host "Error removing rules for $gameName: $_" -ForegroundColor Red
     }
-    Write-Host "Rules for $gameName removed successfully." -ForegroundColor Red
     Write-Host "---------------------------------------------------------------" -ForegroundColor Red
 }
 
