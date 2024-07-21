@@ -91,9 +91,10 @@ Check-Admin
 
 $Host.UI.RawUI.WindowTitle = "Restore Point Management | @IBRPRIDE"
 
-Write-Host "Do you want to Create a Restore Point?"
-Write-Host ""
-Write-Host "1 = Yes"
+Write-Host "Select an option:"
+Write-Host "1. Create a Restore Point"
+Write-Host "2. Restore the backup named 'ibrpride'"
+Write-Host "3. Exit"
 Write-Host ""
 
 $choice = Read-Host "Enter your choice"
