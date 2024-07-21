@@ -1,94 +1,116 @@
 @echo off
 setlocal
 
-:: Check for Administrator privileges
-net session >nul 2>&1
-if %errorLevel% neq 0 (
-    PowerShell.exe -NoProfile -ExecutionPolicy Bypass -Command "Start-Process PowerShell.exe -ArgumentList '-NoProfile -ExecutionPolicy Bypass -File \"\"%~f0\"\"' -Verb RunAs"
-    exit /b
-)
+:: Check for Administrator privileges using PowerShell
+PowerShell -Command "if (-not ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)) { Start-Process PowerShell -ArgumentList '-NoProfile -ExecutionPolicy Bypass -File \"%~f0\"' -Verb RunAs; exit }"
 
 :: Set Console Title and Colors
 title PowerPlan IBRPRIDE
 color 2
 
+:: Function to apply a power plan
+:applyPowerPlan
 echo.
 echo Import IBRPRIDE power plan
 powercfg /duplicatescheme e9a42b02-d5df-448d-aa00-03f14749eb61 71111177-7117-7117-7117-711111111117 >nul 2>&1
+if errorlevel 1 (
+    echo Error: Unable to import power plan.
+    exit /b
+)
 timeout /t 1 /nobreak > NUL
 
 echo.
 echo Set IBRPRIDE power plan active
 powercfg /SETACTIVE 71111177-7117-7117-7117-711111111117 >nul 2>&1
+if errorlevel 1 (
+    echo Error: Unable to set active power plan.
+    exit /b
+)
 timeout /t 1 /nobreak > NUL
 
+goto :deleteOldPlans
+
+:: Function to delete all old power plans except the default one
+:deleteOldPlans
 echo.
 echo Get all power plans
-
-:: Get list of all power plans
 for /f "tokens=3 delims=: " %%a in ('powercfg /list ^| find "GUID"') do (
     set "planGuid=%%a"
     call :deletePowerPlan "%%a"
 ) >nul
 timeout /t 1 /nobreak > NUL
 
-:: Disable hibernate
+goto :disableFeatures
+
+:deletePowerPlan
+if not "%~1" == "e9a42b02-d5df-448d-aa00-03f14749eb61" (
+    powercfg -delete %~1 >nul 2>&1
+    if errorlevel 1 (
+        echo Error: Unable to delete power plan %~1.
+    )
+)
+exit /b
+
+:: Function to disable unnecessary features
+:disableFeatures
 echo.
 echo Disable hibernate
-powercfg /hibernate off
+powercfg /hibernate off >nul 2>&1
+if errorlevel 1 (
+    echo Error: Unable to disable hibernate.
+)
 reg add "HKLM\SYSTEM\CurrentControlSet\Control\Power" /v "HibernateEnabled" /t REG_DWORD /d "0" /f >nul 2>&1
 reg add "HKLM\SYSTEM\CurrentControlSet\Control\Power" /v "HibernateEnabledDefault" /t REG_DWORD /d "0" /f >nul 2>&1
 timeout /t 1 /nobreak > NUL
 
-:: Disable lock
 echo.
 echo Disable lock
 reg add "HKLM\Software\Microsoft\Windows\CurrentVersion\Explorer\FlyoutMenuSettings" /v "ShowLockOption" /t REG_DWORD /d "0" /f >nul 2>&1
 timeout /t 1 /nobreak > NUL
 
-:: Disable sleep
 echo.
 echo Disable sleep
 reg add "HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\FlyoutMenuSettings" /v "ShowSleepOption" /t REG_DWORD /d "0" /f >nul 2>&1
 timeout /t 1 /nobreak > NUL
 
-:: Disable fast boot
 echo.
 echo Disable fast boot
 reg add "HKLM\SYSTEM\CurrentControlSet\Control\Session Manager\Power" /v "HiberbootEnabled" /t REG_DWORD /d "0" /f >nul 2>&1
 timeout /t 1 /nobreak > NUL
 
-:: Unpark CPU cores
+goto :optimizeSettings
+
+:: Function to optimize system settings
+:optimizeSettings
 echo.
 echo Unpark CPU cores
 reg add "HKLM\SYSTEM\ControlSet001\Control\Power\PowerSettings\54533251-82be-4824-96c1-47b60b740d00\0cc5b647-c1df-4637-891a-dec35c318583" /v "ValueMax" /t REG_DWORD /d "0" /f >nul 2>&1
 timeout /t 1 /nobreak > NUL
 
-:: Disable power throttling
 echo.
 echo Disable power throttling
 reg add "HKLM\SYSTEM\CurrentControlSet\Control\Power\PowerThrottling" /v "PowerThrottlingOff" /t REG_DWORD /d "1" /f >nul 2>&1
 timeout /t 1 /nobreak > NUL
 
-:: Optimization system responsiveness
 echo.
 echo Optimization system responsiveness
 reg add "HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Multimedia\SystemProfile" /v "SystemResponsiveness" /t REG_DWORD /d "0" /f >nul 2>&1
 timeout /t 1 /nobreak > NUL
 
-:: Unhide hub selective suspend timeout
 echo.
 echo Unhide hub selective suspend timeout
 reg add "HKLM\System\ControlSet001\Control\Power\PowerSettings\2a737441-1930-4402-8d77-b2bebba308a3\0853a681-27c8-4100-a2fd-82013e970683" /v "Attributes" /t REG_DWORD /d "2" /f >nul 2>&1
 timeout /t 1 /nobreak > NUL
 
-:: Unhide USB 3 link power management
 echo.
 echo Unhide USB 3 link power management
 reg add "HKLM\System\ControlSet001\Control\Power\PowerSettings\2a737441-1930-4402-8d77-b2bebba308a3\d4e98f31-5ffe-4ce1-be31-1b38b384c009" /v "Attributes" /t REG_DWORD /d "2" /f >nul 2>&1
 timeout /t 1 /nobreak > NUL
 
-:: Modify desktop & laptop settings
+goto :modifySettings
+
+:: Function to modify specific settings for desktops and laptops
+:modifySettings
 echo.
 echo MODIFY DESKTOP & LAPTOP SETTINGS
 echo Hard disk turn off hard disk after 0%
@@ -132,8 +154,8 @@ powercfg /setacvalueindex 71111177-7117-7117-7117-711111111117 238c9fa8-0aad-41e
 powercfg /setdcvalueindex 71111177-7117-7117-7117-711111111117 238c9fa8-0aad-41ed-83f4-97be242c8f20 bd3b718a-0680-4d9d-8ab2-e1d2b4ac806d 000
 timeout /t 1 /nobreak > NUL
 
-:: USB settings
 echo.
+echo USB settings
 echo Hub selective suspend timeout 0
 powercfg /setacvalueindex 71111177-7117-7117-7117-711111111117 2a737441-1930-4402-8d77-b2bebba308a3 0853a681-27c8-4100-a2fd-82013e970683 0x00000000
 powercfg /setdcvalueindex 71111177-7117-7117-7117-711111111117 2a737441-1930-4402-8d77-b2bebba308a3 0853a681-27c8-4100-a2fd-82013e970683 0x00000000
@@ -163,7 +185,6 @@ powercfg /setacvalueindex 71111177-7117-7117-7117-711111111117 501a4d13-42af-442
 powercfg /setdcvalueindex 71111177-7117-7117-7117-711111111117 501a4d13-42af-4429-9fd1-a8218c268e20 ee12f906-d277-404b-b6da-e5fa1a576df5 000
 timeout /t 1 /nobreak > NUL
 
-:: Processor power management
 echo.
 echo Minimum processor state 100%
 powercfg /setacvalueindex 71111177-7117-7117-7117-711111111117 54533251-82be-4824-96c1-47b60b740d00 893dee8e-2bef-41e0-89c6-b55d0929964c 0x00000064
@@ -182,8 +203,8 @@ powercfg /setacvalueindex 71111177-7117-7117-7117-711111111117 54533251-82be-482
 powercfg /setdcvalueindex 71111177-7117-7117-7117-711111111117 54533251-82be-4824-96c1-47b60b740d00 bc5038f7-23e0-4960-96da-33abaf5935ec 0x00000064
 timeout /t 1 /nobreak > NUL
 
-:: Display
 echo.
+echo Display
 echo Turn off display after 0%
 powercfg /setacvalueindex 71111177-7117-7117-7117-711111111117 7516b95f-f776-4464-8c53-06167f40cc99 3c0bc021-c8a8-4e07-a973-6b14cbcb2b7e 0x00000000
 powercfg /setdcvalueindex 71111177-7117-7117-7117-711111111117 7516b95f-f776-4464-8c53-06167f40cc99 3c0bc021-c8a8-4e07-a973-6b14cbcb2b7e 0x00000000
@@ -244,8 +265,8 @@ powercfg /setacvalueindex 71111177-7117-7117-7117-711111111117 e276e160-7cb0-43c
 powercfg /setdcvalueindex 71111177-7117-7117-7117-711111111117 e276e160-7cb0-43c6-b20b-73f5dce39954 a1662ab2-9d34-4e53-ba8b-2639b9e20857 003
 timeout /t 1 /nobreak > NUL
 
-:: Battery settings
 echo.
+echo Battery settings
 echo Critical battery notification off
 powercfg /setacvalueindex 71111177-7117-7117-7117-711111111117 e73a048d-bf27-4f12-9731-8b2076e8891f 5dbb7c9f-38e9-40d2-9749-4f8a0e9f640f 000
 powercfg /setdcvalueindex 71111177-7117-7117-7117-711111111117 e73a048d-bf27-4f12-9731-8b2076e8891f 5dbb7c9f-38e9-40d2-9749-4f8a0e9f640f 000
@@ -309,10 +330,4 @@ echo Restart to apply . . .
 pause >nul
 
 :end
-exit /b
-
-:deletePowerPlan
-if not "%~1" == "e9a42b02-d5df-448d-aa00-03f14749eb61" (
-    powercfg -delete %~1
-)
 exit /b
