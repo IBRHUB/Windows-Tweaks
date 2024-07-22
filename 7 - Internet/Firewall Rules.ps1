@@ -1,33 +1,83 @@
 <#
-    .SYNOPSIS
-    Creates or removes firewall rules for various games.
-    
-    .DESCRIPTION
-    This script creates or removes inbound and outbound TCP/UDP firewall rules for popular games including 
-    - Fortnite
-    - Valorant
-    - Apex Legends
-    - CS:GO
-    - Overwatch
-    - MW3
+.SYNOPSIS
+Creates or removes firewall rules for various games and configures network adapters.
 
-    .LINK
-    https://ibrpride.com
+.DESCRIPTION
+This script creates or removes inbound and outbound TCP/UDP firewall rules for popular games including:
+- Fortnite
+- Valorant
+- Apex Legends
+- CS:GO
+- Overwatch
+- MW3
 
-    .NOTES
-    Author: Ibrahim
-    Website: https://ibrpride.com
-    Script Version: 1.2
-    Last Updated: June 2024
+Additionally, it configures network adapters to allow only IPv4 and QoS Packet Scheduler and disables power-saving settings.
+
+.LINK
+https://ibrpride.com
+
+.NOTES
+Author: Ibrahim
+Website: https://ibrpride.com
+Script Version: 1.3
+Last Updated: July 2024
 #>
 
-# Set console colors and clear the screen
+# Check if the script is running as an admin
+if (-NOT ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)) {
+    # Relaunch as an administrator
+    Start-Process powershell.exe -ArgumentList ('-NoProfile -ExecutionPolicy Bypass -File "{0}"' -f $MyInvocation.MyCommand.Definition) -Verb RunAs
+    exit
+}
+
+# Set console window properties for administrator session
+$Host.UI.RawUI.WindowTitle = "Network and Firewall Management | IBRPRIDE"
 $Host.UI.RawUI.BackgroundColor = "Black"
-$Host.UI.RawUI.ForegroundColor = "White"
+$Host.PrivateData.ErrorForegroundColor = "Red"
+$Host.PrivateData.WarningForegroundColor = "Yellow"
+$Host.PrivateData.DebugForegroundColor = "Cyan"
+$Host.PrivateData.VerboseForegroundColor = "Green"
 $Host.PrivateData.ProgressBackgroundColor = "Black"
-$Host.PrivateData.ProgressForegroundColor = "Yellow"
+$Host.PrivateData.ProgressForegroundColor = "White"
 Clear-Host
 
+# Function to check if the script is running as an administrator
+function Check-Admin {
+    if (-NOT ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)) {
+        Write-Host "This script must be run as Administrator."
+        pause
+        exit 1
+    }
+}
+
+# Function to configure network adapter settings
+function Configure-NetworkAdapter {
+    Write-Host "Configuring network adapter: Only Allow IPv4 & QoS Packet Scheduler..." -ForegroundColor Yellow
+
+    # Disable unwanted components
+    Disable-NetAdapterBinding -Name "*" -ComponentID ms_lldp, ms_lltdio, ms_implat, ms_rspndr, ms_tcpip6, ms_server, ms_msclient -ErrorAction SilentlyContinue
+
+    # Enable necessary components
+    Enable-NetAdapterBinding -Name "*" -ComponentID ms_tcpip -ErrorAction SilentlyContinue
+
+    Write-Host "Network adapter configured." -ForegroundColor Green
+}
+
+# Function to disable network adapter power-saving settings
+function Disable-NetworkAdapterPowerSaving {
+    Write-Host "Disabling network adapter power-saving..." -ForegroundColor Yellow
+    $properties = Get-NetAdapter -Physical | Get-NetAdapterAdvancedProperty
+    foreach ($setting in @(
+        "ULPMode", "EEE", "EEELinkAdvertisement", "AdvancedEEE", "EnableGreenEthernet", "EeePhyEnable", "uAPSDSupport",
+        "EnablePowerManagement", "EnableSavePowerNow", "bLowPowerEnable", "PowerSaveMode", "PowerSavingMode",
+        "SavePowerNowEnabled", "AutoPowerSaveModeEnabled", "NicAutoPowerSaver", "SelectiveSuspend"
+    )) {
+        $properties | Where-Object { $_.RegistryKeyword -eq "*$setting" -or $_.RegistryKeyword -eq $setting } | Set-NetAdapterAdvancedProperty -RegistryValue 0
+    }
+    Write-Host "Network adapter power-saving settings disabled." -ForegroundColor Green
+}
+
+# Function to write headers
 function Write-Header {
     param (
         [string]$text
@@ -39,6 +89,7 @@ function Write-Header {
     Write-Host ""
 }
 
+# Function to create firewall rules
 function Create-FirewallRules {
     param (
         [string]$gameName,
@@ -64,6 +115,7 @@ function Create-FirewallRules {
     Write-Host "---------------------------------------------------------------" -ForegroundColor Green
 }
 
+# Function to remove firewall rules
 function Remove-FirewallRules {
     param (
         [string]$gameName
@@ -78,6 +130,7 @@ function Remove-FirewallRules {
     Write-Host "---------------------------------------------------------------" -ForegroundColor Red
 }
 
+# Function to show progress
 function Show-Progress {
     param (
         [string]$activity
@@ -89,6 +142,7 @@ function Show-Progress {
     Write-Progress -Activity $activity -Status "Completed" -Completed
 }
 
+# Function to display game menu
 function Game-Menu {
     Write-Host "Select a game:" -ForegroundColor Yellow
     Write-Host "1. CALL OF DUTY: MODERN WARFARE 3" -ForegroundColor White
@@ -102,6 +156,7 @@ function Game-Menu {
     return (Read-Host "Select an option (1-7)")
 }
 
+# Function to process user's choice
 function Process-Choice {
     param (
         [string]$choice,
@@ -175,29 +230,52 @@ function Process-Choice {
     }
 }
 
-Write-Host "Firewall Rules Management Script" -ForegroundColor Yellow
-Write-Host "================================" -ForegroundColor Yellow
+# Main script execution
+Check-Admin
+
+Write-Host "Network and Firewall Management Script" -ForegroundColor Yellow
+Write-Host "======================================" -ForegroundColor Yellow
 Write-Host ""
 Write-Host "1. Remove firewall rules for games" -ForegroundColor White
 Write-Host "2. Create firewall rules for games" -ForegroundColor White
+Write-Host "3. Configure network adapter: Only Allow IPv4 & QoS Packet Scheduler" -ForegroundColor White
+Write-Host "4. Disable network adapter power-saving settings" -ForegroundColor White
 Write-Host ""
-$choice = Read-Host "Select an option (1 or 2)"
+$choice = Read-Host "Select an option (1-4)"
 
-if ($choice -eq '1') {
-    Write-Header "Removing Firewall Rules"
-    Show-Progress -activity "Removing firewall rules"
-    $gameChoice = Game-Menu
-    Process-Choice -choice $gameChoice -action 'remove'
-    Write-Host "===============================================================" -ForegroundColor Red
-} elseif ($choice -eq '2') {
-    Write-Header "Creating Firewall Rules"
-    Show-Progress -activity "Creating firewall rules"
-    $gameChoice = Game-Menu
-    Process-Choice -choice $gameChoice -action 'create'
-    Write-Host "===============================================================" -ForegroundColor Green
-} else {
-    Write-Host "Invalid choice. Please run the script again and select a valid option." -ForegroundColor Red
-    Write-Host "===============================================================" -ForegroundColor Red
+switch ($choice) {
+    '1' {
+        Write-Header "Removing Firewall Rules"
+        Show-Progress -activity "Removing firewall rules"
+        $gameChoice = Game-Menu
+        Process-Choice -choice $gameChoice -action 'remove'
+        Write-Host "===============================================================" -ForegroundColor Red
+    }
+    '2' {
+        Write-Header "Creating Firewall Rules"
+        Show-Progress -activity "Creating firewall rules"
+        $gameChoice = Game-Menu
+        Process-Choice -choice $gameChoice -action 'create'
+        Write-Host "===============================================================" -ForegroundColor Green
+    }
+    '3' {
+        Write-Header "Configuring Network Adapter"
+        Show-Progress -activity "Configuring network adapter"
+        Configure-NetworkAdapter
+        Write-Host "===============================================================" -ForegroundColor Green
+    }
+    '4' {
+        Write-Header "Disabling Network Adapter Power-Saving"
+        Show-Progress -activity "Disabling network adapter power-saving"
+        Disable-NetworkAdapterPowerSaving
+        Write-Host "===============================================================" -ForegroundColor Green
+    }
+    default {
+        Write-Host "Invalid choice. Please run the script again and select a valid option." -ForegroundColor Red
+        Write-Host "===============================================================" -ForegroundColor Red
+    }
 }
 
 Write-Host "Completed." -ForegroundColor Cyan
+Write-Host "Press any key to exit..." -ForegroundColor Yellow
+$Host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown")
