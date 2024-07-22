@@ -1,9 +1,6 @@
 @echo off
 setlocal
 
-:: Check for Administrator privileges using PowerShell
-PowerShell -Command "if (-not ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)) { Start-Process PowerShell -ArgumentList '-NoProfile -ExecutionPolicy Bypass -File \"%~f0\"' -Verb RunAs; exit }"
-
 :: Set Console Title and Colors
 title PowerPlan IBRPRIDE
 color 2
