@@ -1,3 +1,6 @@
+mode con: cols=75 lines=28
+@(set "0=%~f0"^)#) & powershell -nop -c iex([io.file]::ReadAllText($env:0)) & exit 
+
 <#
 .SYNOPSIS
 Script to create or restore a system restore point.
@@ -91,17 +94,28 @@ function Restore-Backup {
 
 # Main script execution
 Check-Admin
-
-Write-Host "Select an option:"
-Write-Host "1. Create a Restore Point"
-Write-Host "2. Restore from an available restore point"
-Write-Host "3. Exit"
 Write-Host ""
-
-$choice = Read-Host "Enter your choice (1/2/3)"
+Write-Host ""
+Write-Host ""
+Write-Host ""
+Write-Host ""
+Write-Host "                Select an option:" -ForegroundColor Yellow
+Write-Host ""
+Write-Host "            ___________________________________________________ "
+Write-Host ""
+Write-Host "                1. Create a Restore Point"-ForegroundColor Green
+Write-Host "                2. Restore from an available restore point" -ForegroundColor Cyan
+Write-Host "                3. Exit"
+Write-Host ""
+Write-Host ""
+Write-Host "            ___________________________________________________ "
+Write-Host ""
+$choice = Read-Host "               Enter a menu option in the Keyboard [1,2,3]"
+Write-Host ""
+Write-Host ""
 switch ($choice) {
     1 {
-        $restoreName = Read-Host "Enter the name for the Restore Point"
+        $restoreName = Read-Host "                Enter the name for the Restore Point"
         Create-RestorePoint -RestoreName $restoreName
     }
     2 {
