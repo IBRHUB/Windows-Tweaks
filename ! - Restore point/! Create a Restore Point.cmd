@@ -72,7 +72,7 @@ function Create-RestorePoint {
 function Restore-Backup {
     $restorePoints = Get-ComputerRestorePoint | Select-Object -Property SequenceNumber, Description, CreationTime
     if ($restorePoints) {
-        Write-Host "Available restore points:"
+        Write-Host "Available restore points:" -ForegroundColor Green
         $restorePoints | ForEach-Object { Write-Host "$($_.SequenceNumber) - $($_.Description) - $($_.CreationTime)" }
         $sequenceNumber = Read-Host "Enter the Sequence Number of the restore point you want to restore"
         $restorePoint = $restorePoints | Where-Object { $_.SequenceNumber -eq [int]$sequenceNumber }
@@ -99,6 +99,8 @@ Write-Host ""
 Write-Host ""
 Write-Host ""
 Write-Host ""
+Write-Host ""
+Write-Host ""
 Write-Host "                Select an option:" -ForegroundColor Yellow
 Write-Host ""
 Write-Host "            ___________________________________________________ "
@@ -106,7 +108,6 @@ Write-Host ""
 Write-Host "                1. Create a Restore Point"-ForegroundColor Green
 Write-Host "                2. Restore from an available restore point" -ForegroundColor Cyan
 Write-Host "                3. Exit"
-Write-Host ""
 Write-Host ""
 Write-Host "            ___________________________________________________ "
 Write-Host ""
