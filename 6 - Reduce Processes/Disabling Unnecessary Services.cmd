@@ -8,7 +8,7 @@ cd /d %~dp0
 :: Open Disclaimer.txt in Notepad
 start "" notepad.exe "%~dp0Disclaimer.txt"
 
-:: timeout /t 15 /nobreak >nul
+timeout /t 15 /nobreak >nul
 pause
 
 :: Check for administrator privileges
