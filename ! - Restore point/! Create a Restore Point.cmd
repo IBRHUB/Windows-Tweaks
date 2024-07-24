@@ -101,13 +101,13 @@ Write-Host ""
 Write-Host ""
 Write-Host ""
 Write-Host ""
-Write-Host "                Select an option:" -ForegroundColor Yellow
+Write-Host "                            Select an option:" -ForegroundColor Yellow
 Write-Host ""
 Write-Host "            ___________________________________________________ "
 Write-Host ""
 Write-Host "                1. Create a Restore Point"-ForegroundColor Green
 Write-Host "                2. Restore from an available restore point" -ForegroundColor Cyan
-Write-Host "                3. Exit"
+Write-Host "                3. Exit" -ForegroundColor Red
 Write-Host ""
 Write-Host "            ___________________________________________________ "
 Write-Host ""
