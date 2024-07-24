@@ -24,22 +24,29 @@ if (-NOT ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdenti
 }
 
 function Set-ConsoleBackground {
-	    $Host.UI.RawUI.WindowTitle = " Disable Visual Effects | IBRPRIDE"
-        $Host.UI.RawUI.BackgroundColor = "Black"
-        $Host.PrivateData.ProgressBackgroundColor = "Black"
-        $Host.PrivateData.ProgressForegroundColor = "White"
+    $Host.UI.RawUI.WindowTitle = " Disable Visual Effects | IBRPRIDE"
+    $Host.UI.RawUI.BackgroundColor = "Black"
+    $Host.PrivateData.ProgressBackgroundColor = "Black"
+    $Host.PrivateData.ProgressForegroundColor = "White"
 }
+
+# Set the console window size
+cmd /c "mode con: cols=75 lines=30"
 
 Set-ConsoleBackground
 Clear-Host
 
-function Write-ColorfulHost {
+function Write-CenteredText {
     param (
         [string]$text,
         [ConsoleColor]$color = 'Yellow'
     )
-    Write-Host $text -ForegroundColor $color
+    $width = $Host.UI.RawUI.WindowSize.Width
+    $padLength = [math]::Max(0, ($width - $text.Length) / 2)
+    $paddedText = $text.PadLeft($text.Length + $padLength).PadRight($width)
+    Write-Host $paddedText -ForegroundColor $color
 }
+
 # Function to prompt user for confirmation before making changes
 function Confirm-Changes {
     param (
@@ -52,74 +59,81 @@ function Confirm-Changes {
 
 # Function to disable visual effects
 function Disable-VisualEffects {
-    Write-Host "Disabling Visual Effects..." -ForegroundColor Yellow
+	Write-Host
+    Write-CenteredText -text "Disabling Visual Effects..."
     Start-Sleep -Seconds 1
+	Write-Host
 
-    Write-Host " Set font smoothing to ClearType" -ForegroundColor Yellow
+    Write-CenteredText -text "Set font smoothing to ClearType"
     Set-ItemProperty -Path "HKCU:\Control Panel\Desktop" -Name "FontSmoothing" -Value "2"
     Start-Sleep -Seconds 1
     Write-Host
 
-    Write-Host " Modify user interface preferences" -ForegroundColor Yellow
+    Write-CenteredText -text "Modify user interface preferences"
     Set-ItemProperty -Path "HKCU:\Control Panel\Desktop" -Name "UserPreferencesMask" -Value ([byte[]](0x90,0x12,0x03,0x80,0x10,0x00,0x00,0x00))
     Start-Sleep -Seconds 1
     Write-Host
 
-    Write-Host " Enable full window drag" -ForegroundColor Yellow
+    Write-CenteredText -text "Enable full window drag"
     Set-ItemProperty -Path "HKCU:\Control Panel\Desktop" -Name "DragFullWindows" -Value "1"
     Start-Sleep -Seconds 1
     Write-Host
 
-    Write-Host " Disable window animation for minimizing and maximizing" -ForegroundColor Yellow
+    Write-CenteredText -text "Disable window animation for minimizing and maximizing"
     Set-ItemProperty -Path "HKCU:\Control Panel\Desktop\WindowMetrics" -Name "MinAnimate" -Value "0"
     Start-Sleep -Seconds 1
     Write-Host
 
-    Write-Host " Enable alpha selection in list views" -ForegroundColor Yellow
+    Write-CenteredText -text "Enable alpha selection in list views"
     Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "ListviewAlphaSelect" -Value "1"
     Start-Sleep -Seconds 1
     Write-Host
 
-    Write-Host " Show labels alongside icons on the taskbar" -ForegroundColor Yellow
+    Write-CenteredText -text "Show labels alongside icons on the taskbar"
     Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "IconsOnly" -Value "0"
     Start-Sleep -Seconds 1
     Write-Host
 
-    Write-Host " Disable animations in the taskbar" -ForegroundColor Yellow
+    Write-CenteredText -text "Disable animations in the taskbar"
     Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "TaskbarAnimations" -Value "0"
     Start-Sleep -Seconds 1
     Write-Host
 
-    Write-Host " Enable shadow under icons and open windows" -ForegroundColor Yellow
+    Write-CenteredText -text "Enable shadow under icons and open windows"
     Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "ListviewShadow" -Value "1"
     Start-Sleep -Seconds 1
     Write-Host
 
-    Write-Host " Set custom visual effects settings" -ForegroundColor Yellow
+    Write-CenteredText -text "Set custom visual effects settings"
     Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\VisualEffects" -Name "VisualFXSetting" -Value "3"
     Start-Sleep -Seconds 1
     Write-Host
 
-    Write-Host " Disable Aero Peek feature" -ForegroundColor Yellow
+    Write-CenteredText -text "Disable Aero Peek feature"
     Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\DWM" -Name "EnableAeroPeek" -Value "0"
     Start-Sleep -Seconds 1
     Write-Host
 
-    Write-Host " Disable thumbnail caching in DWM (Desktop Window Manager)" -ForegroundColor Yellow
+    Write-CenteredText -text "Disable thumbnail caching in DWM (Desktop Window Manager)"
     Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\DWM" -Name "AlwaysHibernateThumbnails" -Value "0"
     Start-Sleep -Seconds 1
     Write-Host
 
-    Write-Host " Visual Effects disabled successfully." -ForegroundColor Green
-    pause
-	Exit
+    Write-CenteredText -text "Visual Effects disabled successfully." -color Green
+    Write-Host "Press any key to exit..." -ForegroundColor Yellow
+    $Host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown") 
+    Exit
 }
 
 # Main script execution
-if (Confirm-Changes -Message "Do you want to disable visual effects?") {
+Write-Host
+Write-Host
+Write-Host
+Write-Host
+if (Confirm-Changes -Message "	   Do you want to disable visual effects?") {
     Disable-VisualEffects
 } else {
-    Write-Host "Operation canceled by the user."
+    Write-CenteredText -text "	   Operation canceled by the user."
 }
 
 $null = $Host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown")

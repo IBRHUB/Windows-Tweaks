@@ -33,6 +33,9 @@ function Set-ConsoleBackground {
     Clear-Host
 }
 
+# Set the console window size
+cmd /c "mode con: cols=75 lines=38"
+
 # Function to prompt user for confirmation before making changes
 function Confirm-Changes {
     param (
@@ -232,11 +235,15 @@ function Apply-RegistryTweaks {
         }
     }
     Remove-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Run" -Name "OneDrive" 2> $null
-    Start-Sleep -Seconds 10
+    Start-Sleep -Seconds 1
     Write-Host
 
     # Complete message
+	cmd /c "mode con: cols=50 lines=10"
+	CLS
+	Write-Host ""
     Write-Host "Registry tweaks applied successfully." -ForegroundColor Green
+	Write-Host ""
     Read-Host -Prompt "Press Enter to continue..."
 }
 
