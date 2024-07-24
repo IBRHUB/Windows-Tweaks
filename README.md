@@ -18,4 +18,3 @@ The author is not responsible for any damages that may occur from using this too
 
 # 🌐 Community
 Join the [IBR HUB Discord](https://discord.gg/ibrpride-961025296088301648) to connect with others interested in tweaking and optimizing their systems.
-.
