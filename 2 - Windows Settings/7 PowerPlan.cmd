@@ -267,6 +267,7 @@ if "%BatteryStatus%"=="" (
 )
 
 if not "%isLaptop%"=="1" goto PowerPlanX
+if not "%isLaptop%"=="0" goto MODIFY LAPTOP
 
 :MODIFY LAPTOP
 echo [91mMODIFY LAPTOP SETTINGS[0m 

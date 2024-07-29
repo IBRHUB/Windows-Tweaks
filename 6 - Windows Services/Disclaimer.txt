@@ -1,0 +1,40 @@
+إخلاء مسؤولية:
+##############################################################################################################################
+
+هذا السكربت يهدف إلى تعديل إعدادات النظام لتحسين وإدارة الخدمات. يجب على المستخدم استخدام هذا السكربت على مسؤوليته الشخصية.
+ قد تؤدي إجراءات التعديل الواردة في السكربت إلى تغييرات في أداء النظام. يُنصح بإجراء نسخة احتياطية للبيانات قبل تشغيل السكربت.
+
+##############################################################################################################################
+
+الاستخدام على مسؤوليتك الشخصية:
+
+استخدام هذا السكربت يتم على مسؤوليتك الشخصية. لا يتحمل أي بي أر ستور أو أي جهة مرتبطة به أي مسؤولية عن أي أضرار قد تنتج عن استخدامه. 
+أي بي أر ستور غير مسؤولين عن أي ضرر يمكن أن يحدث للنظام أو البيانات نتيجة استخدام هذا السكربت.
+
+##############################################################################################################################
+
+وينصح دائمًا بتشغيل السكربتات التي تقوم بتعديلات في النظام بصلاحيات المسؤول. بالنسبة لتعديلات السكربت، فإن السكربت يُعدل بعض إعدادات إدارة الذاكرة وتعطيل بعض الخدمات.
+ قبل تشغيله، يجب التأكد من فهم تأثيرات هذه التعديلات على أداء النظام الخاص بك، والتأكد من أنك تعمل كمسؤول لتجنب مشاكل الصلاحيات. يرجى الحرص والتأكد من نسخ البيانات الهامة قبل تشغيل السكربت
+ لتفادي أي مشاكل غير متوقعة في حال حدوث أي خطأ.
+
+
+Disclaimer:
+##############################################################################################################################
+
+This script is intended to modify system settings to improve performance and manage services.
+ Users should use this script at their own risk. Modifications made by the script may affect system performance.
+ It is recommended to back up your data before running the script.
+
+##############################################################################################################################
+
+Use at Your Own Risk:
+
+Using this script is at your own risk. 
+IBR Store or any affiliated parties bear no responsibility for any damage that may result from its use. 
+IBR Store is not liable for any damage that could occur to the system or data as a result of using this script.
+
+##############################################################################################################################
+
+Always run scripts that make system modifications with administrator privileges. For this script’s modifications, it adjusts certain disables some services.
+ Before running it, ensure you understand the effects of these changes on your system’s performance and verify that you are running with administrator privileges to avoid permission issues.
+ Please exercise caution and ensure you have backed up important data before running the script to avoid any unforeseen issues in case of errors.

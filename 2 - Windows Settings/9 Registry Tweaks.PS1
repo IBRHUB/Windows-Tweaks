@@ -36,6 +36,42 @@ function Set-ConsoleBackground {
 # Set the console window size
 cmd /c "mode con: cols=75 lines=38"
 
+# Set Console Opacity Transparent
+Add-Type @"
+using System;
+using System.Runtime.InteropServices;
+
+public class ConsoleOpacity {
+    [DllImport("kernel32.dll", SetLastError = true)]
+    private static extern IntPtr GetConsoleWindow();
+
+    [DllImport("user32.dll", SetLastError = true)]
+    private static extern bool SetLayeredWindowAttributes(IntPtr hwnd, uint crKey, byte bAlpha, uint dwFlags);
+
+    private const uint LWA_ALPHA = 0x00000002;
+
+    public static void SetOpacity(byte opacity) {
+        IntPtr hwnd = GetConsoleWindow();
+        if (hwnd == IntPtr.Zero) {
+            throw new InvalidOperationException("Failed to get console window handle.");
+        }
+        bool result = SetLayeredWindowAttributes(hwnd, 0, opacity, LWA_ALPHA);
+        if (!result) {
+            throw new InvalidOperationException("Failed to set window opacity.");
+        }
+    }
+}
+"@
+
+try {
+    # Set opacity (0-255, where 255 is fully opaque and 0 is fully transparent)
+    [ConsoleOpacity]::SetOpacity(230)
+    Write-Host "Console opacity set successfully." -ForegroundColor Green
+} catch {
+    Write-Host "An error occurred: $_" -ForegroundColor Red
+}
+
+
 # Function to prompt user for confirmation before making changes
 function Confirm-Changes {
     param (
@@ -81,8 +117,7 @@ function Apply-RegistryTweaks {
     Write-Host
 
     # Set NVIDIA settings
-    Write-Host "- NVIDIA settings" -ForegroundColor Yellow
-    Write-Host "Enable old NVIDIA sharpening"
+    Write-Host "- Enable old NVIDIA sharpening" -ForegroundColor Yellow
     Set-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Services\nvlddmkm\FTS" -Name "EnableGR535" -Value 0 2> $null
     Start-Sleep -Seconds 1
     Write-Host
@@ -237,7 +272,112 @@ function Apply-RegistryTweaks {
     Remove-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Run" -Name "OneDrive" 2> $null
     Start-Sleep -Seconds 1
     Write-Host
+	
+	
 
+<#
+
+: end powershell / begin batch
+
+#>
+
+
+	Write-Host "Increase taskbar transparency" -ForegroundColor Yellow
+	# This won't work if you disabled transparency. This might decrease performance a little.
+	Reg.exe Add "HKLM\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" /v "UseOLEDTaskbarTransparency" /t REG_DWORD /d 1 /f > $null 2>&1
+	Reg.exe Add "HKLM\SOFTWARE\Microsoft\Windows\Dwm" /v "ForceEffectMode" /t REG_DWORD /d 2 /f > $null 2>&1
+	Start-Sleep -Seconds 1
+    Write-Host
+	
+	Write-Host "Disable showing recent and mostly used item" -ForegroundColor Yellow
+	# Stop showing mostly used and recent items. In quick access, the start menu, explorer and more.
+	Reg.exe Add "HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\Explorer" /v "HideRecentlyAddedApps" /t REG_DWORD /d 1 /f > $null 2>&1
+	Reg.exe Delete "HKCU\SOFTWARE\Policies\Microsoft\Windows\Explorer" /v "HideRecentlyAddedApps" /f > $null 2>&1
+	Reg.exe Add "HKLM\SOFTWARE\Policies\Microsoft\Windows\Explorer" /v "HideRecentlyAddedApps" /t REG_DWORD /d 1 /f > $null 2>&1
+	Reg.exe Add "HKCU\Software\Microsoft\Windows\CurrentVersion\Explorer" /v "ShowFrequent" /t REG_DWORD /d 0 /f > $null 2>&1
+	Reg.exe Add "HKCU\Software\Microsoft\Windows\CurrentVersion\Explorer" /v "ShowRecent" /t REG_DWORD /d 0 /f > $null 2>&1
+	Reg.exe Delete "HKCU\SOFTWARE\Policies\Microsoft\Windows\Explorer" /v "ShowOrHideMostUsedApps" /f > $null 2>&1
+	Reg.exe Add "HKLM\SOFTWARE\Policies\Microsoft\Windows\Explorer" /v "ShowOrHideMostUsedApps" /t REG_DWORD /d 2 /f > $null 2>&1
+	Reg.exe Delete "HKCU\Software\Microsoft\Windows\CurrentVersion\Policies\Explorer" /v "NoStartMenuMFUprogramsList" /f > $null 2>&1
+	Reg.exe Delete "HKCU\Software\Microsoft\Windows\CurrentVersion\Policies\Explorer" /v "NoRecentDocsHistory" /f > $null 2>&1
+	Reg.exe Add "HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\Explorer" /v "NoRecentDocsHistory" /t REG_DWORD /d 1 /f > $null 2>&1
+	Reg.exe Add "HKCU\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" /v "TaskbarSh" /t REG_DWORD /d 0 /f > $null 2>&1
+	Reg.exe Add "HKLM\SOFTWARE\Policies\Microsoft\Windows\Explorer" /v "ShowOrHideMostUsedApps" /t REG_DWORD /d 0 /f > $null 2>&1
+	Start-Sleep -Seconds 1
+    Write-Host
+	
+	Write-Host "Browser background optimizations" -ForegroundColor Yellow
+	# Tries to mitigate some browser launch and background activity for edge and chrome
+	Reg.exe Add "HKLM\SOFTWARE\Policies\Microsoft\Edge" /v "StartupBoostEnabled" /t REG_DWORD /d "0" /f > $null 2>&1
+	Reg.exe Add "HKLM\SOFTWARE\Policies\Microsoft\Edge" /v "BackgroundModeEnabled" /t REG_DWORD /d "0" /f > $null 2>&1
+	Reg.exe Add "HKLM\SOFTWARE\Policies\Microsoft\Edge" /v "BatterySaverModeAvailability" /t REG_DWORD /d "1" /f > $null 2>&1
+
+	Reg.exe Add "HKLM\SOFTWARE\Policies\Google\Chrome" /v "StartupBoostEnabled" /t REG_DWORD /d "0" /f > $null 2>&1
+	Reg.exe Add "HKLM\SOFTWARE\Policies\Google\Chrome" /v "BackgroundModeEnabled" /t REG_DWORD /d "0" /f > $null 2>&1
+	Reg.exe Add "HKLM\SOFTWARE\Policies\Google\Chrome" /v "HighEfficiencyModeEnabled" /t REG_DWORD /d "1" /f > $null 2>&1
+	Reg.exe Add "HKLM\SOFTWARE\Policies\Google\Chrome" /v "BatterySaverModeAvailability" /t REG_DWORD /d "1" /f > $null 2>&1
+
+	Reg.exe Add "HKLM\Software\Policies\BraveSoftware\Brave" /v "BackgroundModeEnabled" /t REG_DWORD /d "0" /f > $null 2>&1
+	Reg.exe Add "HKLM\Software\Policies\BraveSoftware\Brave" /v "HighEfficiencyModeEnabled" /t REG_DWORD /d "0" /f > $null 2>&1
+	Reg.exe Add "HKLM\Software\Policies\BraveSoftware\Brave" /v "BatterySaverModeAvailability" /t REG_DWORD /d "0" /f > $null 2>&1
+
+	Reg.exe Add "HKLM\Software\Policies\BraveSoftware\Brave\Recommended" /v "BackgroundModeEnabled" /t REG_DWORD /d "0" /f > $null 2>&1
+	Reg.exe Add "HKLM\Software\Policies\BraveSoftware\Brave\Recommended" /v "BatterySaverModeAvailability" /t REG_DWORD /d "1" /f > $null 2>&1
+	Start-Sleep -Seconds 1
+    Write-Host
+	
+	Write-Host "Disable browser updates" -ForegroundColor Yellow
+	# Disables updates for Firefox, Edge and Chrome
+	
+	# Edge
+	Reg.exe Add "HKLM\SYSTEM\CurrentControlSet\Services\MicrosoftEdgeElevationService" /v "Start" /t REG_DWORD /d 4 /f > $null 2>&1
+	Reg.exe Add "HKLM\SYSTEM\CurrentControlSet\Services\edgeupdate" /v "Start" /t REG_DWORD /d 4 /f > $null 2>&1
+	Reg.exe Add "HKLM\SYSTEM\CurrentControlSet\Services\edgeupdatem" /v "Start" /t REG_DWORD /d 4 /f > $null 2>&1
+	Reg.exe Delete "HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Schedule\TaskCache\Tree\MicrosoftEdgeUpdateTaskMachineCore" /f > $null 2>&1
+
+	Reg.exe Delete "HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Schedule\TaskCache\Tree\MicrosoftEdgeUpdateTaskMachineUA" /f > $null 2>&1
+	# Chrome
+	Reg.exe Add "HKLM\SYSTEM\CurrentControlSet\Services\GoogleChromeElevationService" /v "Start" /t REG_DWORD /d 4 /f > $null 2>&1
+	Reg.exe Add "HKLM\SYSTEM\CurrentControlSet\Services\gupdate" /v "Start" /t REG_DWORD /d 4 /f > $null 2>&1
+	Reg.exe Add "HKLM\SYSTEM\CurrentControlSet\Services\gupdatem" /v "Start" /t REG_DWORD /d 4 /f > $null 2>&1
+
+	# Firefox
+	Reg.exe Add "HKLM\SOFTWARE\Policies\Mozilla\Firefox" /v "DisableAppUpdate" /t REG_DWORD /d "1" /f > $null 2>&1
+	Start-Sleep -Seconds 1
+    Write-Host
+	
+	
+	Write-Host "Disable search highlights" -ForegroundColor Yellow
+	Reg.exe Add "HKCU\Software\Microsoft\Windows\CurrentVersion\SearchSettings" /v "IsDynamicSearchBoxEnabled" /t REG_DWORD /d 0 /f > $null 2>&1
+	Reg.exe Add "HKCU\Software\Microsoft\Windows\CurrentVersion\Feeds\DSB" /v "ShowDynamicContent" /t REG_DWORD /d 0 /f > $null 2>&1
+	Start-Sleep -Seconds 1
+    Write-Host
+	
+	Write-Host "Explorer Optimizations" -ForegroundColor Yellow
+	Reg.exe Add "HKLM\Software\Microsoft\Windows NT\CurrentVersion\Winlogon" /v "AutoRestartShell" /t REG_DWORD /d "1" /f > $null 2>&1
+	Reg.exe Add "HKLM\SYSTEM\CurrentControlSet\Control\FileSystem" /v "LongPathsEnabled" /t REG_DWORD /d "0" /f > $null 2>&1
+	Reg.exe Add "HKCU\Control Panel\Desktop" /v "MenuShowDelay" /t REG_SZ /d "0" /f > $null 2>&1
+	Reg.exe Add "HKCU\Control Panel\Mouse" /v "MouseHoverTime" /t REG_SZ /d "0" /f > $null 2>&1
+	Reg.exe Add "HKCU\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" /v "ListviewShadow" /t REG_DWORD /d "0" /f > $null 2>&1
+	Reg.exe Add "HKCU\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" /v "NoNetCrawling" /t REG_DWORD /d "1" /f > $null 2>&1
+	Reg.exe Add "HKCU\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" /v "EnableBalloonTips" /t REG_DWORD /d "0" /f > $null 2>&1
+	Reg.exe Add "HKCU\Software\Microsoft\Windows\CurrentVersion\Policies\Explorer" /v "NoLowDiskSpaceChecks" /t REG_DWORD /d "1" /f > $null 2>&1
+	Reg.exe Add "HKCU\Software\Microsoft\Windows\CurrentVersion\Policies\Explorer" /v "LinkResolveIgnoreLinkInfo" /t REG_DWORD /d "1" /f > $null 2>&1
+	Reg.exe Add "HKCU\Software\Microsoft\Windows\CurrentVersion\Policies\Explorer" /v "NoResolveSearch" /t REG_DWORD /d "1" /f > $null 2>&1
+	Reg.exe Add "HKCU\Software\Microsoft\Windows\CurrentVersion\Policies\Explorer" /v "NoResolveTrack" /t REG_DWORD /d "1" /f > $null 2>&1
+	Reg.exe Add "HKCU\Software\Microsoft\Windows\CurrentVersion\Policies\Explorer" /v "NoInternetOpenWith" /t REG_DWORD /d "1" /f > $null 2>&1
+	Reg.exe Add "HKCU\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" /v "DisallowShaking" /t REG_DWORD /d "1" /f > $null 2>&1
+	Reg.exe Add "HKCU\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" /v "HideFileExt" /t REG_DWORD /d "0" /f > $null 2>&1
+	Reg.exe Add "HKCU\Software\Microsoft\Windows\CurrentVersion\Explorer\AutoComplete" /v "Append Completion" /d "yes" /f > $null 2>&1
+	Reg.exe Add "HKCU\Software\Microsoft\Windows\CurrentVersion\Explorer\AutoComplete" /v "AutoSuggest" /d "yes" /f > $null 2>&1
+	Reg.exe Add "HKLM\SYSTEM\CurrentControlSet\Control\GraphicsDrivers" /v "TdrDelay" /t REG_DWORD /d "10" /f > $null 2>&1
+	Reg.exe Add "HKCU\Control Panel\Desktop\WindowMetrics" /v "MinAnimate" /t REG_SZ /d "0" /f > $null 2>&1
+	Reg.exe Add "HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\AeDebug" /v "Auto" /t REG_SZ /d "0" /f > $null 2>&1
+	Reg.exe Add "HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System" /v "PromptOnSecureDesktop" /t REG_DWORD /d "0" /f > $null 2>&1
+	Reg.exe Add "HKCU\Software\Classes\Local Settings\Software\Microsoft\Windows\Shell\Bags\AllFolders\Shell" /v "FolderType" /t REG_SZ /d "NotSpecified" /f > $null 2>&1
+	Start-Sleep -Seconds 1
+    Write-Host
+	
     # Complete message
 	cmd /c "mode con: cols=50 lines=10"
 	CLS
@@ -245,12 +385,16 @@ function Apply-RegistryTweaks {
     Write-Host "Registry tweaks applied successfully." -ForegroundColor Green
 	Write-Host ""
     Read-Host -Prompt "Press Enter to continue..."
+
 }
 
 # Main script execution
 Set-ConsoleBackground
-
-if (Confirm-Changes -Message "Do you want to apply registry tweaks?") {
+Write-Host
+Write-Host
+Write-Host
+Write-Host
+if (Confirm-Changes -Message "	   Do you want to apply registry tweaks?") {
     Apply-RegistryTweaks
 } else {
     Read-Host -Prompt "Operation canceled by the user."
