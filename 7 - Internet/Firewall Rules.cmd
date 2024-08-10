@@ -33,7 +33,7 @@ if (-NOT ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdenti
 }
 
 # Set console window properties for administrator session
-$Host.UI.RawUI.WindowTitle = "Network and Firewall Management | IBRPRIDE"
+$Host.UI.RawUI.WindowTitle = "Network and Firewall Management | @IBR HUB"
 $Host.UI.RawUI.BackgroundColor = "Black"
 $Host.PrivateData.ErrorForegroundColor = "Red"
 $Host.PrivateData.WarningForegroundColor = "Yellow"

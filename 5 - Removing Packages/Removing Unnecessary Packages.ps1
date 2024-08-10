@@ -3,7 +3,9 @@
 Removes selected AppxPackages from all users on the system.
 
 .DESCRIPTION
-This script removes specified AppxPackages from all users on the system. It checks if running with Administrator privileges and restarts with elevated rights if necessary. Console window properties are set for better visibility.
+This script removes specified AppxPackages from all users on the system. 
+It checks if running with Administrator privileges and restarts with elevated rights if necessary. 
+Console window properties are set for better visibility.
 
 .LINK
 https://ibrpride.com

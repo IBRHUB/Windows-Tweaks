@@ -66,7 +66,7 @@ goto done
 :Default
 cls
 echo [94mExecute NVIDIA Profile Inspector with the default settings file[0m
-powershell.exe -Command "& '%~dp0\_nvidiaProfileInspector.exe' -ArgumentList '%~dp0\NVIDIA Settings.nip'"
+powershell.exe -Command "& '%~dp0\_nvidiaProfileInspector.exe' -ArgumentList '%~dp0\Default.nip'"
 
 goto done
 
