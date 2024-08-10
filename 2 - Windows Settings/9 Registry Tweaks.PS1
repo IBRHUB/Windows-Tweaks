@@ -144,10 +144,11 @@ function Apply-RegistryTweaks {
     Start-Sleep -Seconds 1
     Write-Host
 
-    # Enable multi-plane overlay (MPO) in graphics settings
+    # Disabling multi-plane overlay (MPO) in graphics settings
+    # fix all desktop flickering/stuttering
     Write-Host "- Graphics settings" -ForegroundColor Yellow
-    Write-Host "Enable MPO (multi-plane overlay)"
-    Remove-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\Dwm" -Name "OverlayTestMode" 2> $null
+    Write-Host "Disabling MPO (multi-plane overlay)"
+    New-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\Dwm" -Name "OverlayTestMode" -Value 5 -PropertyType DWord -Force 2> $null
     Start-Sleep -Seconds 1
     Write-Host
 
