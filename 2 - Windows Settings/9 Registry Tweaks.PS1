@@ -277,7 +277,7 @@ function Apply-RegistryTweaks {
 
 <#
 
-: end powershell / begin batch
+: end powershell syntax  / begin batch syntax 
 
 #>
 
