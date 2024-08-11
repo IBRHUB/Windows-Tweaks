@@ -19,8 +19,7 @@ Invoke-WebRequest -Uri "https://github.com/ibrpride/Windows-Tweaks/archive/refs/
 
 
 ```
-if (-not (Test-Path "C:\Program Files\7-Zip\7z.exe")) { Invoke-WebRequest -Uri "https://www.7-zip.org/a/7z2100-x64.msi" -OutFile "$env:TEMP\7zinstaller.msi"; Start-Process msiexec.exe -ArgumentList "/i `"$env:TEMP\7zinstaller.msi`" /quiet /norestart" -Wait; if (-not (Test-Path "C:\Program Files\7-Zip\7z.exe")) { Write-Error "7-Zip installation failed"; Exit 1 } } $zipPath = "$env:USERPROFILE\Desktop\Windows-Tweaks-main.zip"; if (Test-Path $zipPath) { Start-Process "C:\Program Files\7-Zip\7z.exe" -ArgumentList "x `"$zipPath`" -o`"$env:USERPROFILE\Desktop\Windows-Tweaks-main`" -y" -Wait } else { Write-Error "ZIP file not found: $zipPath" }
-
+if (-not (Test-Path "C:\Program Files\7-Zip\7z.exe")) { $installer = "$env:TEMP\7zinstaller.msi"; Invoke-WebRequest -Uri "https://www.7-zip.org/a/7z2201-x64.msi" -OutFile $installer; Start-Process msiexec.exe -ArgumentList "/i `"$installer`" /quiet /norestart" -Wait; Remove-Item $installer -Force } $zipPath = "$env:USERPROFILE\Desktop\Windows-Tweaks-main.zip"; $extractPath = "$env:USERPROFILE\Desktop\Windows-Tweaks-main"; if (Test-Path $zipPath) { if (-not (Test-Path $extractPath)) { New-Item -ItemType Directory -Path $extractPath | Out-Null } Start-Process "C:\Program Files\7-Zip\7z.exe" -ArgumentList "x `"$zipPath`" -o`"$extractPath`" -y" -Wait } else { Write-Error "ZIP file not found: $zipPath" }
 ```
 
 3. Double-click the file to execute it.
