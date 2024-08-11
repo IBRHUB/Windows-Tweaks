@@ -1,9 +1,6 @@
 # ✨ About
 This open-source tool is designed to enhance computer performance. Results may vary based on your system's configuration.
 
-# ⚠️ Disclaimer
-The author is not responsible for any damages that may occur from using this tool. Use at your own risk.
-
 # 💻 Requirements
 - Windows 10 or 11
 - Internet Connection
