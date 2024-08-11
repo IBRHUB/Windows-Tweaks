@@ -23,7 +23,7 @@ if (-NOT ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdenti
 }
 
 # Set console window properties for administrator session
-$Host.UI.RawUI.WindowTitle = "Restore Point Management | @IBRPRIDE"
+$Host.UI.RawUI.WindowTitle = "Restore Point Management | @IBRHUB"
 $Host.UI.RawUI.BackgroundColor = "Black"
 $Host.PrivateData.ErrorForegroundColor = "Red"
 $Host.PrivateData.WarningForegroundColor = "Yellow"

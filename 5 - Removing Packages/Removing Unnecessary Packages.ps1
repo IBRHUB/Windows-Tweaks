@@ -25,7 +25,7 @@ if (-NOT ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdenti
 }
 
 # Set console window properties for administrator session
-$Host.UI.RawUI.WindowTitle = "Removing Unnecessary Packages | IBRPRIDE"
+$Host.UI.RawUI.WindowTitle = "Removing Unnecessary Packages | @IBRHUB"
 $Host.UI.RawUI.BackgroundColor = "Black"
 $Host.PrivateData.ErrorForegroundColor = "Red"
 $Host.PrivateData.WarningForegroundColor = "Yellow"

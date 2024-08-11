@@ -26,7 +26,7 @@ if (-NOT ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdenti
 
 # Function to set console background and title
 function Set-ConsoleBackground {
-    $Host.UI.RawUI.WindowTitle = "Registry Tweaks | IBRPRIDE"
+    $Host.UI.RawUI.WindowTitle = "Registry Tweaks | @IBRHUB"
     $Host.UI.RawUI.BackgroundColor = "Black"
     $Host.PrivateData.ProgressBackgroundColor = "Black"
     $Host.PrivateData.ProgressForegroundColor = "White"

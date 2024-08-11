@@ -24,7 +24,7 @@ if (-NOT ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdenti
 }
 
 function Set-ConsoleBackground {
-    $Host.UI.RawUI.WindowTitle = " Disable Visual Effects | IBRPRIDE"
+    $Host.UI.RawUI.WindowTitle = " Disable Visual Effects | @IBRHUB"
     $Host.UI.RawUI.BackgroundColor = "Black"
     $Host.PrivateData.ProgressBackgroundColor = "Black"
     $Host.PrivateData.ProgressForegroundColor = "White"

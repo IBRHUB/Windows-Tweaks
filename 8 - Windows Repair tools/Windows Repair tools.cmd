@@ -2,14 +2,14 @@
 setlocal enabledelayedexpansion
 mode con: cols=100 lines=35
 title Windows Repair tools
-powershell.exe -Command "$host.ui.RawUI.WindowTitle = 'Windows Repair tools | @IBRPRIDE'"
+powershell.exe -Command "$host.ui.RawUI.WindowTitle = 'Windows Repair tools | @IBRHUB'"
 
 ::  Set Console Opacity Transparent
 powershell -NoProfile -ExecutionPolicy Bypass -File "%~dp0SetConsoleOpacity.ps1"
 
 :: Check for administrator privileges
 fltmc > nul 2>&1 || (
-	echo Administrator privileges are required.
+	echo Administrator privileges are required
 	powershell -c "Start-Process -Verb RunAs -FilePath 'cmd' -ArgumentList " 2> nul || (
 		echo You must run this script as admin.
 		if "%*"=="" pause

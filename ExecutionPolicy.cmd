@@ -2,7 +2,7 @@
 setlocal enabledelayedexpansion
 mode con: cols=75 lines=28
 title ExecutionPolicy
-powershell.exe -Command "$host.ui.RawUI.WindowTitle = 'ExecutionPolicy | @IBR HUB'"
+powershell.exe -Command "$host.ui.RawUI.WindowTitle = 'ExecutionPolicy | @IBRHUB'"
 powershell -NoProfile -ExecutionPolicy Bypass -File "%~dp0/4 - Clean Temp/SetConsoleOpacity.ps1"
 :: Check for administrator privileges
 fltmc > nul 2>&1 || (

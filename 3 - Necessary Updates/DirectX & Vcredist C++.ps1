@@ -31,7 +31,7 @@ if (-NOT ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdenti
     exit
 }
 
-$Host.UI.RawUI.WindowTitle = "DirectX & Vcredist C++ | IBRPRIDE"
+$Host.UI.RawUI.WindowTitle = "DirectX & Vcredist C++ | @IBRHUB"
 $Host.UI.RawUI.BackgroundColor = "Black"
 $Host.UI.RawUI.ForegroundColor = "White"
 $Host.PrivateData.ProgressBackgroundColor = "Black"
