@@ -11,7 +11,10 @@ The author is not responsible for any damages that may occur from using this too
 
 # 🛠️ How to Use
 1. Visit the [Releases](https://github.com/ibrpride/Windows-Tweaks/releases) page.
-2. Download `Windows.Tweaks.exe`.
+2. Download 
+```
+Invoke-WebRequest -Uri "https://github.com/ibrpride/Windows-Tweaks/archive/refs/heads/main.zip" -OutFile "$env:USERPROFILE\Desktop\Windows-Tweaks-main.zip"
+```
 3. Double-click the file to execute it.
 
 [Watch the video tutorial here] soon
