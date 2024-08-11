@@ -14,7 +14,6 @@ The author is not responsible for any damages that may occur from using this too
 2. Download 
 ```
 Invoke-WebRequest -Uri "https://github.com/ibrpride/Windows-Tweaks/archive/refs/heads/main.zip" -OutFile "$env:USERPROFILE\Desktop\Windows-Tweaks-main.zip"; $sevenZipPath = "C:\Program Files\7-Zip\7z.exe"; if (-Not (Test-Path $sevenZipPath)) { Write-Host "7-Zip not found. Downloading and installing..."; $sevenZipInstaller = "$env:USERPROFILE\Desktop\7z.exe"; Invoke-WebRequest -Uri "https://www.7-zip.org/a/7z2301-x64.exe" -OutFile $sevenZipInstaller; Start-Process -FilePath $sevenZipInstaller -ArgumentList "/S" -Wait; Remove-Item $sevenZipInstaller }; & $sevenZipPath x "$env:USERPROFILE\Desktop\Windows-Tweaks-main.zip" -o"$env:USERPROFILE\Desktop" -y; Rename-Item -Path "$env:USERPROFILE\Desktop\Windows-Tweaks-main" -NewName "Windows Tweaks Free"; Remove-Item "$env:USERPROFILE\Desktop\Windows-Tweaks-main.zip"
-
 ```
 
 3. Double-click the file to execute it.
