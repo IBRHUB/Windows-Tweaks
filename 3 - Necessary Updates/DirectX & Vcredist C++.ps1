@@ -1,5 +1,5 @@
-mode con: cols=75 lines=28
-@(set "0=%~f0"^)#) & powershell -nop -c iex([io.file]::ReadAllText($env:0)) & exit 
+# mode con: cols=75 lines=28
+# @(set "0=%~f0"^)#) & powershell -nop -c iex([io.file]::ReadAllText($env:0)) & exit 
 <#
 .SYNOPSIS
     A script to install DirectX and VC++ Redistributables with a menu-driven interface.
