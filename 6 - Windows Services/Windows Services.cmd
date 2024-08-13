@@ -101,10 +101,17 @@ function Restore-Default-Services {
 
 function Show-Menu {
     Clear-Host
-	cmd /c cd /d %~dp0 
-    start "Disclaimer.txt"
+	$file = Get-ChildItem -Path (Split-Path -Path $MyInvocation.MyCommand.Definition -Parent) -Filter 'Disclaimer.txt' -Recurse -ErrorAction SilentlyContinue | Where-Object { $_.Name -eq 'Disclaimer.txt' }; if ($file) { Start-Process -FilePath $file.FullName } else { Write-Output "The file does not exist." }
 	Clear-Host
-    pause
+	Write-Host ""
+	Write-Host ""
+	Write-Host ""
+	Write-Host ""
+	Write-Host ""
+	Write-Host ""
+	Write-Host ""
+	Write-Host ""
+	$null = Read-Host "Do you agree with the Disclaimer you read?`nPress Enter to continue"
 	Clear-Host
     Write-Host ""
     Write-Host ""
