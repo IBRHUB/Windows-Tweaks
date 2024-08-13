@@ -2,7 +2,7 @@
 setlocal enabledelayedexpansion
 mode con: cols=75 lines=28
 powershell.exe -Command "$host.ui.RawUI.WindowTitle = 'Power Plan | @IBRPRIDE'"
-
+powershell -NoProfile -ExecutionPolicy Bypass -File "%~dp0..\_Modules\SetConsoleOpacity.ps1"
 :: Check for administrator privileges
 fltmc > nul 2>&1 || (
 	echo Administrator privileges are required.
@@ -17,6 +17,8 @@ fltmc > nul 2>&1 || (
 :PowerPlanM
 cls
 mode con: cols=75 lines=28
+echo:
+echo:
 echo:
 echo:
 echo:

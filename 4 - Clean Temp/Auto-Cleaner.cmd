@@ -3,7 +3,7 @@ setlocal EnableDelayedExpansion
 powershell.exe -Command "$host.ui.RawUI.WindowTitle = 'Auto Cleaner | @IBRHUB'"
 
 ::  Set Console Opacity Transparent
-powershell -NoProfile -ExecutionPolicy Bypass -File "%~dp0SetConsoleOpacity.ps1"
+powershell -NoProfile -ExecutionPolicy Bypass -File "%~dp0..\_Modules\SetConsoleOpacity.ps1"
 
 mode con: cols=75 lines=28
 

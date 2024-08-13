@@ -5,7 +5,7 @@ title Windows Repair tools
 powershell.exe -Command "$host.ui.RawUI.WindowTitle = 'Windows Repair tools | @IBRHUB'"
 
 ::  Set Console Opacity Transparent
-powershell -NoProfile -ExecutionPolicy Bypass -File "%~dp0SetConsoleOpacity.ps1"
+powershell -NoProfile -ExecutionPolicy Bypass -File "%~dp0..\_Modules\SetConsoleOpacity.ps1"
 
 :: Check for administrator privileges
 fltmc > nul 2>&1 || (

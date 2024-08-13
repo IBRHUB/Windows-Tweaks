@@ -5,7 +5,8 @@ title NVIDIA Settings
 powershell.exe -Command "$host.ui.RawUI.WindowTitle = 'NVIDIA Settings | @IBRPRIDE'"
 ::  Set Console Opacity Transparent
 
-powershell -NoProfile -ExecutionPolicy Bypass -File "%~dp0SetConsoleOpacity.ps1"
+powershell -NoProfile -ExecutionPolicy Bypass -File "%~dp0..\..\_Modules\SetConsoleOpacity.ps1"
+
 :: Check for administrator privileges
 fltmc > nul 2>&1 || (
 	echo Administrator privileges are required.
