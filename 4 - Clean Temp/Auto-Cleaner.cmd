@@ -9,7 +9,7 @@ mode con: cols=75 lines=28
 
 :Auto-Cleaner
 cls
-
+mode con: cols=75 lines=28
 echo:
 echo:
 echo:
