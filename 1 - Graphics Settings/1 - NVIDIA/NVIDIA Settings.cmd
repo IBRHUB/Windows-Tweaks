@@ -2,7 +2,7 @@
 setlocal enabledelayedexpansion
 mode con: cols=75 lines=28
 title NVIDIA Settings 
-powershell.exe -Command "$host.ui.RawUI.WindowTitle = 'NVIDIA Settings | @IBRPRIDE'"
+powershell.exe -Command "$host.ui.RawUI.WindowTitle = 'NVIDIA Settings | @IBRHUB'"
 ::  Set Console Opacity Transparent
 
 powershell -NoProfile -ExecutionPolicy Bypass -File "%~dp0..\..\_Modules\SetConsoleOpacity.ps1"
