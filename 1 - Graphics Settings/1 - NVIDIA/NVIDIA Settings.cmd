@@ -76,6 +76,7 @@ goto done
 :done
 echo.
 echo [92mYour Nvidia Profile Inspector has been changed successfully.[0m
+timeout /t 7 /nobreak > NUL
 echo.
 pause
 goto NVIDIAs
