@@ -31,6 +31,8 @@ echo:
 echo:
 echo:
 echo:
+echo:
+echo:
 echo:             [96m Do you want to Modify your NVIDIA Control Panel[0m     
 echo:            ___________________________________________________ 
 echo:                                                               
@@ -61,7 +63,7 @@ if "%choice%"=="1" (
 cls
 echo [94mExecute NVIDIA Profile Inspector with the appropriate settings file[0m
 powershell.exe -Command "& '%~dp0\_nvidiaProfileInspector.exe' -ArgumentList '%~dp0\IBRPRIDE.nip'"
-
+timeout /t 7 /nobreak > NUL
 goto done
 
 :Default
