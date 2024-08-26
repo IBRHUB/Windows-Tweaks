@@ -60,7 +60,7 @@ echo:
 echo         "Open [93mAdrenalin Edition Software[0m  > Go to [93mGaming[0m  > [93mDisplay[0m "
 echo:        _____________________________________________________________
 echo:
-echo:                               [93mDisplay Settings[0m 
+echo:                    [93mDisplay Settings - Preferences [0m 
 echo: 
 echo          "In Game Overlay [[91mOFF[0m]"
 echo          "Check For Updates [[91mManual[0m]"
