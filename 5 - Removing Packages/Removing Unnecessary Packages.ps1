@@ -1,11 +1,11 @@
 <#
 .SYNOPSIS
-Removes selected AppxPackages from all users on the system.
+Installs or removes selected UWP AppxPackages from all users on the system.
 
 .DESCRIPTION
-This script removes specified AppxPackages from all users on the system. 
+This script provides a GUI to either install all UWP AppxPackages or remove specified AppxPackages from all users on the system. 
 It checks if running with Administrator privileges and restarts with elevated rights if necessary. 
-Console window properties are set for better visibility.
+Console window properties, such as title, colors, and opacity, are set for better visibility.
 
 .LINK
 https://ibrpride.com
@@ -13,8 +13,8 @@ https://ibrpride.com
 .NOTES
 Author: Ibrahim
 Website: https://ibrpride.com
-Script Version: 1.0
-Last Updated: June 2024
+Script Version: 2.0
+Last Updated: August 2024
 #>
 
 # Check if the script is running as an admin
@@ -37,6 +37,7 @@ $Host.PrivateData.ProgressForegroundColor = "White"
 # Clear the console screen
 Clear-Host
 
+# Set console opacity
 Add-Type @"
 using System;
 using System.Runtime.InteropServices;
@@ -71,56 +72,75 @@ try {
     Write-Host "An error occurred: $_" -ForegroundColor Red
 }
 
+# Create a new form
+Add-Type -AssemblyName System.Windows.Forms
+$form = New-Object System.Windows.Forms.Form
+$form.Text = "UWP App Manager"
+$form.Size = New-Object System.Drawing.Size(400, 200)
+$form.StartPosition = "CenterScreen"
 
-# Function to remove AppxPackage without logging
-function Remove-AppxPackageWithoutLogging {
-    param (
-        [Parameter(Mandatory = $true)]
-        [string]$AppName
+# Create a button for installing all UWP apps
+$installButton = New-Object System.Windows.Forms.Button
+$installButton.Text = "Install All UWP Apps"
+$installButton.Size = New-Object System.Drawing.Size(150, 50)
+$installButton.Location = New-Object System.Drawing.Point(20, 50)
+$installButton.Add_Click({
+    Get-AppxPackage -AllUsers | Foreach-Object {
+        Add-AppxPackage -DisableDevelopmentMode -Register -ErrorAction SilentlyContinue "$($_.InstallLocation)\AppXManifest.xml"
+    }
+    [System.Windows.Forms.MessageBox]::Show("All UWP apps have been installed.", "Completed", [System.Windows.Forms.MessageBoxButtons]::OK, [System.Windows.Forms.MessageBoxIcon]::Information)
+})
+
+# Create a button for removing selected UWP apps
+$removeButton = New-Object System.Windows.Forms.Button
+$removeButton.Text = "Remove Selected UWP Apps"
+$removeButton.Size = New-Object System.Drawing.Size(150, 50)
+$removeButton.Location = New-Object System.Drawing.Point(200, 50)
+$removeButton.Add_Click({
+    $packagesToRemove = @(
+        "3DBuilder",
+        "bing",
+        "bingfinance",
+        "bingsports",
+        "BingWeather",
+        "CommsPhone",
+        "Drawboard PDF",
+        "Facebook",
+        "Getstarted",
+        "Microsoft.Messaging",
+        "MicrosoftOfficeHub",
+        "Office.OneNote",
+        "OneNote",
+        "people",
+        "SkypeApp",
+        "solit",
+        "Sway",
+        "Twitter",
+        "WindowsAlarms",
+        "WindowsPhone",
+        "WindowsMaps",
+        "WindowsFeedbackHub",
+        "WindowsSoundRecorder",
+        "windowscommunicationsapps",
+        "zune"
     )
 
-    try {
-        # Use PowerShell command to remove the AppxPackage
-        Get-AppxPackage -AllUsers *$AppName* | Remove-AppxPackage -ErrorAction Stop
-        Write-Host "Removed AppxPackage: $AppName" -ForegroundColor Green
-    } catch {
-        Write-Host "Failed to remove AppxPackage: $AppName. Continuing..." -ForegroundColor Yellow
+    foreach ($package in $packagesToRemove) {
+        try {
+            Get-AppxPackage -AllUsers *$package* | Remove-AppxPackage -ErrorAction Stop
+            Write-Host "Removed AppxPackage: $package" -ForegroundColor Green
+        } catch {
+            Write-Host "Failed to remove AppxPackage: $package. Continuing..." -ForegroundColor Yellow
+        }
     }
-}
 
-# List of AppxPackage names to remove
-$packagesToRemove = @(
-    "3DBuilder",
-    "bing",
-    "bingfinance",
-    "bingsports",
-    "BingWeather",
-    "CommsPhone",
-    "Drawboard PDF",
-    "Facebook",
-    "Getstarted",
-    "Microsoft.Messaging",
-    "MicrosoftOfficeHub",
-    "Office.OneNote",
-    "OneNote",
-    "people",
-    "SkypeApp",
-    "solit",
-    "Sway",
-    "Twitter",
-    "WindowsAlarms",
-    "WindowsPhone",
-    "WindowsMaps",
-    "WindowsFeedbackHub",
-    "WindowsSoundRecorder",
-    "windowscommunicationsapps",
-    "zune"
-)
+    [System.Windows.Forms.MessageBox]::Show("Selected UWP apps have been removed.", "Completed", [System.Windows.Forms.MessageBoxButtons]::OK, [System.Windows.Forms.MessageBoxIcon]::Information)
+})
 
-# Loop through each package and remove it
-foreach ($package in $packagesToRemove) {
-    Remove-AppxPackageWithoutLogging -AppName $package
-}
+# Add the buttons to the form
+$form.Controls.Add($installButton)
+$form.Controls.Add($removeButton)
 
-# Output completion message
-Write-Host "AppxPackage removal completed." -ForegroundColor Cyan
+# Show the form
+$form.Add_Shown({$form.Activate()})
+[void]$form.ShowDialog()
