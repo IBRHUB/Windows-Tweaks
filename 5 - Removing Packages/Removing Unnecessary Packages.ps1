@@ -13,7 +13,7 @@ https://ibrpride.com
 .NOTES
 Author: Ibrahim
 Website: https://ibrpride.com
-Script Version: 2.0
+Script Version: 2.1
 Last Updated: August 2024
 #>
 
@@ -25,7 +25,7 @@ if (-NOT ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdenti
 }
 
 # Set console window properties for administrator session
-$Host.UI.RawUI.WindowTitle = "Removing Unnecessary Packages | @IBRHUB"
+$Host.UI.RawUI.WindowTitle = "UWP App Manager | @IBRHUB"
 $Host.UI.RawUI.BackgroundColor = "Black"
 $Host.PrivateData.ErrorForegroundColor = "Red"
 $Host.PrivateData.WarningForegroundColor = "Yellow"
@@ -71,19 +71,38 @@ try {
 } catch {
     Write-Host "An error occurred: $_" -ForegroundColor Red
 }
+Clear-Host
 
-# Create a new form
+# Create a new form with dark/light mode support
 Add-Type -AssemblyName System.Windows.Forms
+Add-Type -AssemblyName System.Drawing
+
 $form = New-Object System.Windows.Forms.Form
-$form.Text = "UWP App Manager"
+$form.Text = "UWP App Manager | @IBRHUB"
 $form.Size = New-Object System.Drawing.Size(400, 200)
 $form.StartPosition = "CenterScreen"
+
+# Detect the Windows theme (dark or light)
+$theme = Get-ItemPropertyValue -Path 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Themes\Personalize' -Name 'AppsUseLightTheme'
+
+if ($theme -eq 0) {
+    $form.BackColor = [System.Drawing.Color]::Black
+    $form.ForeColor = [System.Drawing.Color]::White
+} else {
+    $form.BackColor = [System.Drawing.Color]::White
+    $form.ForeColor = [System.Drawing.Color]::Black
+}
 
 # Create a button for installing all UWP apps
 $installButton = New-Object System.Windows.Forms.Button
 $installButton.Text = "Install All UWP Apps"
 $installButton.Size = New-Object System.Drawing.Size(150, 50)
 $installButton.Location = New-Object System.Drawing.Point(20, 50)
+$installButton.BackColor = $form.BackColor
+$installButton.ForeColor = $form.ForeColor
+$installButton.FlatStyle = "Flat"
+$installButton.FlatAppearance.BorderColor = $form.ForeColor
+
 $installButton.Add_Click({
     Get-AppxPackage -AllUsers | Foreach-Object {
         Add-AppxPackage -DisableDevelopmentMode -Register -ErrorAction SilentlyContinue "$($_.InstallLocation)\AppXManifest.xml"
@@ -96,6 +115,11 @@ $removeButton = New-Object System.Windows.Forms.Button
 $removeButton.Text = "Remove Selected UWP Apps"
 $removeButton.Size = New-Object System.Drawing.Size(150, 50)
 $removeButton.Location = New-Object System.Drawing.Point(200, 50)
+$removeButton.BackColor = $form.BackColor
+$removeButton.ForeColor = $form.ForeColor
+$removeButton.FlatStyle = "Flat"
+$removeButton.FlatAppearance.BorderColor = $form.ForeColor
+
 $removeButton.Add_Click({
     $packagesToRemove = @(
         "3DBuilder",
